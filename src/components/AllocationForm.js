@@ -15,12 +15,15 @@ const AllocationForm = (props) => {
     const handleChange = event => {
         const value = Math.max(min, Math.min(max, Number(event.target.value)));
         setCost(value);
+        if((value+1) > remaining){
+            alert("The value cannot exceed remaining funds "+currency+" "+remaining);
+        }
     };
 
     const submitEvent = () => {
 
         if(cost > remaining) {
-            alert("The value cannot exceed remaining funds  £"+remaining);
+            alert("The value cannot exceed remaining funds "+currency+" "+remaining);
             setCost("");
             return;
         }
