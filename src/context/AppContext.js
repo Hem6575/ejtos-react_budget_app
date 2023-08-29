@@ -30,6 +30,31 @@ export const AppReducer = (state, action) => {
                     ...state
                 }
             }
+            case 'DECREASE_EXPENSE':
+            let totalBudget = 0;
+            totalBudget = state.expenses.reduce(
+                (previousExp, currentExp) => {
+                    return previousExp + currentExp.cost
+                },0
+            );
+            totalBudget = totalBudget - action.payload.cost;
+            action.type = "DONE";
+            if(totalBudget >= state.budget) {
+                state.expenses.map((currentExp)=> {
+                    if(currentExp.name === action.payload.name) {
+                        currentExp.cost =  currentExp.cost - action.payload.cost;
+                    }
+                    return currentExp
+                });
+                return {
+                    ...state,
+                };
+            } else {
+                alert("Cannot decrease the allocation!");
+                return {
+                    ...state
+                }
+            }
             case 'RED_EXPENSE':
                 const red_expenses = state.expenses.map((currentExp)=> {
                     if (currentExp.name === action.payload.name && currentExp.cost - action.payload.cost >= 0) {

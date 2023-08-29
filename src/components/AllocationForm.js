@@ -1,43 +1,53 @@
 import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 const AllocationForm = (props) => {
-    const { dispatch,remaining  } = useContext(AppContext);
-
+    const { dispatch, remaining, currency  } = useContext(AppContext);
     const [name, setName] = useState('');
     const [cost, setCost] = useState('');
     const [action, setAction] = useState('');
 
+    const min = 0;
+    const max = remaining;
+
+    const handleChange = event => {
+        const value = Math.max(min, Math.min(max, Number(event.target.value)));
+        setCost(value);
+    };
+
     const submitEvent = () => {
 
-            if(cost > remaining) {
-                alert("The value cannot exceed remaining funds  £"+remaining);
-                setCost("");
-                return;
-            }
+        if(cost > remaining) {
+            alert("The value cannot exceed remaining funds  £"+remaining);
+            setCost("");
+            return;
+        }
 
         const expense = {
             name: name,
             cost: parseInt(cost),
         };
+
         if(action === "Reduce") {
             dispatch({
                 type: 'RED_EXPENSE',
                 payload: expense,
             });
         } else {
-                dispatch({
-                    type: 'ADD_EXPENSE',
-                    payload: expense,
-                });
-            }
+            dispatch({
+                type: 'ADD_EXPENSE',
+                payload: expense,
+            });
+        }
     };
 
     return (
         <div>
             <div className='row'>
 
-            <div className="input-group mb-3" style={{ marginLeft: '2rem' }}>
+            <div className="input-group mb-3" style={{ marginLeft: '2rem',flex:"1" }}>
                     <div className="input-group-prepend">
                 <label className="input-group-text" htmlFor="inputGroupSelect01">Department</label>
                   </div>
@@ -58,15 +68,14 @@ const AllocationForm = (props) => {
                         <option defaultValue value="Add" name="Add">Add</option>
                 <option value="Reduce" name="Reduce">Reduce</option>
                   </select>
-
-                    <input
-                        required='required'
-                        type='number'
-                        id='cost'
-                        value={cost}
-                        style={{ marginLeft: '2rem' , size: 10}}
-                        onChange={(event) => setCost(event.target.value)}>
-                        </input>
+                    <InputGroup className="mb-3" style={{flexWrap:"initial !important"}}>
+                        <InputGroup.Text>{currency}</InputGroup.Text>
+                        <Form.Control required='required'
+                            type='number'
+                            id='cost'
+                            value={cost}
+                            onChange={handleChange} style={{flex:"0 1 14%"}}/>
+                    </InputGroup>
 
                     <button className="btn btn-primary" onClick={submitEvent} style={{ marginLeft: '2rem' }}>
                         Save
